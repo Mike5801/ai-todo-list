@@ -1,0 +1,61 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    env_file:
+      - ./server/.env
+    command: tail -f /dev/null
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server/package.json
+        - action: sync
+          path: ./server/
+          target: /usr/src/app
+          ignore:
+            - node_modules/
+  # client:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     NODE_ENV: development
+  #   env_file:
+  #     - ./client/.env.local
+  #   command: tail -f /dev/null
+  #   develop:
+  #     watch:
+  #       - action: rebuild
+  #         path: ./client/package.json
+  #       - action: rebuild
+  #         path: ./client/tailwind.config.ts
+  #       - action: rebuild
+  #         path: ./client/next.config.ts   
+  #       - action: sync
+  #         path: ./client/
+  #         target: /usr/src/app
+  #         ignore:
+  #           - node_modules/
+  #   depends_on:
+  #     - server
+  postgres:
+    image: postgres:13
+    ports:
+      - "5433:5432"
+    env_file:
+      - ./server/.env
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - arch-spike-data:/var/lib/postgresql/data
+volumes:
+  arch-spike-data:
