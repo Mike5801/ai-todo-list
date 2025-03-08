@@ -2,6 +2,7 @@ import { dbDeleteTaskById } from "@/services/task.service";
 import { Button } from "./ui/button";
 import useTaskState from "@/stores/task.store";
 import { toast } from "sonner";
+import { EditModal } from "./EditModal";
 
 interface TaskElementProps {
   taskId: number;
@@ -53,9 +54,7 @@ export const TaskElement = ({
       </div>
       <div className="flex gap-2 items-center">
         {/* Action buttons */}
-        <Button size={"sm"} variant={"action"}>
-          Edit
-        </Button>
+        <EditModal key={taskId} taskId={taskId} title={title} status={status} dueDate={dueDate}/>
         <Button size={"sm"} variant={"delete"} onClick={handleDelete}>
           Delete
         </Button>

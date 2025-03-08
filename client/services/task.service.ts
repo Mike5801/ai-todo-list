@@ -109,7 +109,7 @@ export async function dbUpdateTask(
       taskId,
       title,
       status,
-      dueDate,
+      dueDate: new Date(dueDate),
     },
   });
   if (dbResponse.data.errors) {
@@ -128,7 +128,6 @@ export async function dbUpdateTask(
 }
 
 export async function dbDeleteTaskById(taskId: number): Promise<NextResponse> {
-  console.log(taskId)
   const dbResponse = await axios.post(graphqlUrl, {
     query: `
       mutation($taskId: Float!) {
