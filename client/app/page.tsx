@@ -24,15 +24,11 @@ export default function Home() {
   const handleSubmit = async () => {
     const response = await postToGpt();
     const data = await response.json();
-    if (data) {
-      console.log(data.message);
-    }
   }
 
   return (
     <div>
       <div>Next App</div>
-      <button onClick={handleSubmit}>Get AI Response</button>
     </div>
   );
 }
