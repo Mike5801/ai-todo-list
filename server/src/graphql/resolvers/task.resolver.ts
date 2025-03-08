@@ -13,23 +13,25 @@ export class TaskResolver {
     @Arg("title") title: string,
     @Arg("status") status: string,
     @Arg("dueDate") dueDate: Date
-  ) : Promise<TaskType> {
-    const createdTask = await this.taskRepository.createTask(title, status, dueDate);
+  ): Promise<TaskType> {
+    const createdTask = await this.taskRepository.createTask(
+      title,
+      status,
+      dueDate
+    );
     return createdTask;
   }
 
   @Query(() => [TaskType])
-  async getTasks() : Promise<TaskType[]> {
+  async getTasks(): Promise<TaskType[]> {
     const tasks = await this.taskRepository.getTasks();
     return tasks;
   }
 
   @Query(() => TaskType)
-  async getTaskById(
-    @Arg("taskId") taskId: number
-  ) : Promise<TaskType> {
+  async getTaskById(@Arg("taskId") taskId: number): Promise<TaskType> {
     const task = await this.taskRepository.getTaskById(taskId);
-    return task
+    return task;
   }
 
   @Mutation(() => TaskType)
@@ -38,12 +40,12 @@ export class TaskResolver {
     @Arg("title") title: string,
     @Arg("status") status: string,
     @Arg("dueDate") dueDate: Date
-  ) : Promise<TaskType> {
+  ): Promise<TaskType> {
     const task: TaskI = {
       id: taskId,
       title,
       status,
-      due_date: dueDate
+      due_date: dueDate,
     };
 
     const updatedTask = await this.taskRepository.updateTask(task);
@@ -51,15 +53,13 @@ export class TaskResolver {
   }
 
   @Mutation(() => TaskType)
-  async deleteTaskById(
-    @Arg("taskId") taskId: number
-  ) : Promise<TaskType> {
+  async deleteTaskById(@Arg("taskId") taskId: number): Promise<TaskType> {
     const deletedTask = await this.taskRepository.deleteTaskById(taskId);
     return deletedTask;
   }
 
   @Mutation(() => TaskType)
-  async deleteAllTasks() : Promise<TaskType[]> {
+  async deleteAllTasks(): Promise<TaskType[]> {
     const deletedTasks = await this.taskRepository.deleteAllTasks();
     return deletedTasks;
   }
