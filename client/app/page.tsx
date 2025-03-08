@@ -2,7 +2,6 @@
 import { TaskElement } from "@/components/TaskElement";
 import { Button } from "@/components/ui/button";
 import { TaskI } from "@/interfaces/task.interface";
-import { postToGpt } from "@/services/openai.service";
 import { dbCreateTask, dbGetTasks } from "@/services/task.service";
 import useTaskState from "@/stores/task.store";
 import { useEffect } from "react";
@@ -25,11 +24,6 @@ export default function Home() {
     }
     getTasks();
   }, []);
-
-  const handleSubmit = async () => {
-    const response = await postToGpt();
-    const data = await response.json();
-  };
 
   const handleFormSubmit = async (formData: FormData) => {
     const title = formData.get("title") as string;
