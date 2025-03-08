@@ -36,7 +36,7 @@ export class TaskRepositoryPsql implements TaskRepositoryDomain {
   }
 
   async deleteTaskById(taskId: number): Promise<TaskI> {
-    const query = `DELETEE FROM tasks WHERE id = $1 RETURNING *`;
+    const query = `DELETE FROM tasks WHERE id = $1 RETURNING *`;
     const { rows } = await db.query(query, [taskId]);
     return rows[0];
   }

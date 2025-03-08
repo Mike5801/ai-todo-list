@@ -22,7 +22,7 @@ export async function dbCreateTask(
     variables: {
       title,
       status,
-      dueDate,
+      dueDate: new Date(dueDate),
     },
   });
 
@@ -127,10 +127,11 @@ export async function dbUpdateTask(
   );
 }
 
-export async function dbDeleteTaskById(taskId: string): Promise<NextResponse> {
+export async function dbDeleteTaskById(taskId: number): Promise<NextResponse> {
+  console.log(taskId)
   const dbResponse = await axios.post(graphqlUrl, {
     query: `
-      mutation($taskId: !String) {
+      mutation($taskId: Float!) {
         deleteTaskById(taskId: $taskId) {
           id,
           title,

@@ -25,7 +25,7 @@ export class TaskResolver {
   @Query(() => [TaskType])
   async getTasks(): Promise<TaskType[]> {
     const tasks = await this.taskRepository.getTasks();
-    return tasks;
+    return tasks as TaskI[];
   }
 
   @Query(() => TaskType)
