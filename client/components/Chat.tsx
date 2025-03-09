@@ -6,7 +6,11 @@ import { postToGpt } from "@/services/openai.service";
 import { TaskExtraction } from "@/schemas/task.schema";
 import useTaskState from "@/stores/task.store";
 import { TaskI } from "@/interfaces/task.interface";
-import { dbCreateTask } from "@/services/task.service";
+import {
+  dbCreateTask,
+  dbDeleteTaskById,
+  dbUpdateTask,
+} from "@/services/task.service";
 import { toast } from "sonner";
 
 interface ChatProps {
@@ -15,15 +19,20 @@ interface ChatProps {
 
 export const Chat = ({ closeChat }: ChatProps) => {
   const [messages, setMessages] = useState<string[]>([]);
+  const tasks = useTaskState((state) => state.tasks);
   const addTask = useTaskState((state) => state.addTask);
+  const updateTask = useTaskState((state) => state.updateTask);
+  const deleteTask = useTaskState((state) => state.deleteTask);
   const handleSubmit = async (formData: FormData) => {
     const userMessage = formData.get("userMessage") as string;
     setMessages([...messages, userMessage]);
     try {
-      const response = await postToGpt(userMessage);
+      const response = await postToGpt(userMessage, tasks);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       const taskInfo = JSON.parse(data.message) as TaskExtraction;
+
+      console.log(taskInfo);
 
       switch (taskInfo.operation) {
         case "CREATE": {
@@ -43,17 +52,58 @@ export const Chat = ({ closeChat }: ChatProps) => {
           };
           addTask(newTask);
           toast.success("Task created successfully through Chat bot");
+          break;
         }
 
         case "READ": {
+          const retrievedTask: TaskI = {
+            id: taskInfo.taskId!,
+            title: taskInfo.title,
+            status: taskInfo.status,
+            due_date: new Date(taskInfo.dueDate),
+          };
+
+          setMessages([
+            ...messages,
+            `Retrieved task ${JSON.stringify(retrievedTask)}`,
+          ]);
           break;
         }
 
         case "UPDATE": {
+          const response = await dbUpdateTask(
+            parseInt(taskInfo.taskId!),
+            taskInfo.title,
+            taskInfo.status,
+            new Date(taskInfo.dueDate)
+          );
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error);
+          const task = data.task;
+          const updatedTask: TaskI = {
+            id: task.id,
+            title: task.title,
+            status: task.status,
+            due_date: task.due_date,
+          };
+          updateTask(updatedTask);
+          toast.success("Task updated successfully through chat bot");
           break;
         }
 
         case "DELETE": {
+          const response = await dbDeleteTaskById(parseInt(taskInfo.taskId!));
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error);
+          const task = data.task;
+          const deletedTask: TaskI = {
+            id: task.id,
+            title: task.title,
+            status: task.status,
+            due_date: task.due_date,
+          };
+          deleteTask(deletedTask.id);
+          toast.success("Task deleted successfully through chat bot");
           break;
         }
 
