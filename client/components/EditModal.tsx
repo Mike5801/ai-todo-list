@@ -45,11 +45,9 @@ export const EditModal = ({ taskId, title, status, dueDate } : EditModalProps) =
   }
   
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"sm"} variant={"action"} onClick={() => {
-          setOpen(true);
-        }}>
+        <Button size={"sm"} variant={"action"}>
           Edit
         </Button>
       </DialogTrigger>

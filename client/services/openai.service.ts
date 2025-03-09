@@ -21,6 +21,8 @@ export async function postToGpt(message: string, tasks: TaskI[]): Promise<NextRe
         { role: "user", content: `
           Extract the task title, status, due date, id (if applicable) and the intention (create, read, update or delete) from this message: ${message}. 
           
+          If the message is not related to CRUD operations of tasks, populate the specified JSON object with empty string "" and operation READ
+
           If the intention is create, populate the specified JSON object with the information of the message
 
           If the intention is read, update or delete, obtain the information of the current existing task from this list: ${JSON.stringify(tasks)} 
@@ -34,6 +36,7 @@ export async function postToGpt(message: string, tasks: TaskI[]): Promise<NextRe
 
           If the intent is delete, find the most similar task from the list based on title and retrieve this task's data.
           Use this task data to populate the specified JSON object
+
 
           Here is the specified JSON:
           
