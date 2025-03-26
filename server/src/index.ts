@@ -7,7 +7,6 @@ import { buildSchema } from "type-graphql";
 import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { WebSocketServer } from "ws";
-import { makeServer } from "graphql-ws";
 import { useServer } from "graphql-ws/use/ws";
 import { expressMiddleware } from "@apollo/server/express4";
 import { TaskResolver } from "./graphql/resolvers/task.resolver";

@@ -7,6 +7,7 @@ import {
   Subscription,
   type SubscribeResolverData,
   type SubscriptionHandlerData,
+  Int,
 } from "type-graphql";
 import { TaskRepositoryDomain } from "../../domain/repositories/taskRepository.interface";
 import { TaskRepositoryPsql } from "../../repositories/task.repository";
@@ -31,6 +32,22 @@ export class TaskResolver {
       dueDate
     );
     pubSub.publish(Topic.TASKS, createdTask);
+    return createdTask;
+  }
+  
+  @Mutation(() => TaskType)
+  async createTaskAndPublishToTopicIc(
+    @Arg("topicId", () => Int) topicId: number,
+    @Arg("title") title: string,
+    @Arg("status") status: string,
+    @Arg("dueDate") dueDate: Date
+  ): Promise<TaskType> {
+    const createdTask = await this.taskRepository.createTask(
+      title,
+      status,
+      dueDate
+    );
+    pubSub.publish(Topic.DYNAMIC_ID_TOPIC, topicId, createdTask);
     return createdTask;
   }
 
@@ -79,6 +96,17 @@ export class TaskResolver {
   // Subscriptions
   @Subscription({ topics: Topic.TASKS })
   taskSubscription(
+    @Root() task: TaskI
+  ): TaskType {
+    return task;
+  }
+  
+  @Subscription({
+    topics: Topic.DYNAMIC_ID_TOPIC,
+    topicId: ({ args }: SubscribeResolverData<any, { topicId: number }, any>) => args.topicId,
+  })
+  taskSubscriptionByTopicId(
+    @Arg("topicId", () => Int) _topicId: number,
     @Root() task: TaskI
   ): TaskType {
     return task;
