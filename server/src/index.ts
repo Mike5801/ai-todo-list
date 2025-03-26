@@ -11,6 +11,7 @@ import { makeServer } from "graphql-ws";
 import { useServer } from "graphql-ws/use/ws";
 import { expressMiddleware } from "@apollo/server/express4";
 import { TaskResolver } from "./graphql/resolvers/task.resolver";
+import { pubSub } from "./graphql/pubSub/pubsub";
 
 dotenv.config();
 
@@ -23,11 +24,11 @@ async function main() {
     const schema = await buildSchema({
       resolvers: [TaskResolver],
       validate: false,
+      pubSub: pubSub
     });
 
     const wsServer = new WebSocketServer({
       server: httpServer,
-      path: "/subscriptions",
     });
 
     const serverCleanup = useServer({ schema }, wsServer);

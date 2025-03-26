@@ -1,13 +1,24 @@
-import { Arg, Mutation, Resolver, Query } from "type-graphql";
+import {
+  Arg,
+  Mutation,
+  Resolver,
+  Query,
+  Root,
+  Subscription,
+  type SubscribeResolverData,
+  type SubscriptionHandlerData,
+} from "type-graphql";
 import { TaskRepositoryDomain } from "../../domain/repositories/taskRepository.interface";
 import { TaskRepositoryPsql } from "../../repositories/task.repository";
 import { TaskType } from "../types/task.type";
 import { TaskI } from "../../domain/models/task.interface";
+import { Topic, pubSub } from "../pubSub/pubsub";
 
 @Resolver()
 export class TaskResolver {
   private taskRepository: TaskRepositoryDomain = new TaskRepositoryPsql();
 
+  // Queries and mutations
   @Mutation(() => TaskType)
   async createTask(
     @Arg("title") title: string,
@@ -19,6 +30,7 @@ export class TaskResolver {
       status,
       dueDate
     );
+    pubSub.publish(Topic.TASKS, createdTask);
     return createdTask;
   }
 
@@ -62,5 +74,13 @@ export class TaskResolver {
   async deleteAllTasks(): Promise<TaskType[]> {
     const deletedTasks = await this.taskRepository.deleteAllTasks();
     return deletedTasks;
+  }
+  
+  // Subscriptions
+  @Subscription({ topics: Topic.TASKS })
+  taskSubscription(
+    @Root() task: TaskI
+  ): TaskType {
+    return task;
   }
 }
