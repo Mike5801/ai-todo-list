@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner"; 
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { ChatPopover } from "@/components/ChatPopover";
+import { ApolloWrapper } from "@/providers/apollo-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,13 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-        <Toaster richColors expand={true} closeButton/>
-        <ChatPopover />
-      </body>
+      <ApolloWrapper>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {children}
+          <Toaster richColors expand={true} closeButton />
+          <ChatPopover />
+        </body>
+      </ApolloWrapper>
     </html>
   );
 }
