@@ -31,7 +31,7 @@ export class TaskResolver {
       status,
       dueDate
     );
-    pubSub.publish(Topic.TASKS, createdTask);
+    pubSub.publish(Topic.TASKS, { ...createdTask, operation: "CREATE"});
     return createdTask;
   }
   
@@ -47,7 +47,7 @@ export class TaskResolver {
       status,
       dueDate
     );
-    pubSub.publish(Topic.DYNAMIC_ID_TOPIC, topicId, createdTask);
+    pubSub.publish(Topic.DYNAMIC_ID_TOPIC, topicId, { ...createdTask, operation: "CREATE"});
     return createdTask;
   }
 
@@ -78,12 +78,14 @@ export class TaskResolver {
     };
 
     const updatedTask = await this.taskRepository.updateTask(task);
+    pubSub.publish(Topic.TASKS, { ...updatedTask, operation: "UPDATE"});
     return updatedTask;
   }
 
   @Mutation(() => TaskType)
   async deleteTaskById(@Arg("taskId") taskId: number): Promise<TaskType> {
     const deletedTask = await this.taskRepository.deleteTaskById(taskId);
+    pubSub.publish(Topic.TASKS, { ...deletedTask, operation: "DELETE"});
     return deletedTask;
   }
 
