@@ -10,20 +10,41 @@ import { dbGetTasks } from "@/services/task.service";
 export default function Tasks() {
   const tasks = useTaskState((state) => state.tasks);
   const addTask = useTaskState((state) => state.addTask);
+  const updateTask = useTaskState((state) => state.updateTask);
+  const deleteTask = useTaskState((state) => state.deleteTask);
   const setTasks = useTaskState((state) => state.setTasks);
-  const { data: createTaskSubscription, loading, error } = useSubscription(TASK_SUBSCRIPTION);
+  const { data: data, loading, error } = useSubscription(TASK_SUBSCRIPTION);
 
   useEffect(() => {
     function syncTask() {
       if (!loading && !error) {
-        const response = createTaskSubscription.taskSubscription;
+        const response = data.taskSubscription;
+        const operation = response.operation;
+        console.log(response);
         const task: TaskI = { 
           id: response.id,
           title: response.title,
           status: response.status,
           due_date: response.due_date
         };
-        addTask(task);
+        
+        switch (operation) {
+          case "CREATE": {
+            addTask(task);
+            break;
+          }
+          case "UPDATE": {
+            updateTask(task);
+            break;
+          }
+          case "DELETE": {
+            deleteTask(task.id);
+            break;
+          }
+          default:
+            console.log("No operation");
+            break;
+        }
       }
     }
     
@@ -42,7 +63,7 @@ export default function Tasks() {
       getTasks();
     }
     syncTask();
-  }, [createTaskSubscription]);
+  }, [data]);
   
   return (
     <div className="flex flex-col p-5 gap-10">

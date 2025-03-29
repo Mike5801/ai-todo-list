@@ -6,7 +6,8 @@ export const TASK_SUBSCRIPTION = gql`
       id,
       status,
       title,
-      due_date
+      due_date,
+      operation
     }
   }
 `;

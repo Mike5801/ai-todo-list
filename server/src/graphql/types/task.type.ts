@@ -13,4 +13,7 @@ export class TaskType {
 
   @Field(() => Date)
   due_date: Date;
+  
+  @Field(() => String, { nullable: true })
+  operation?: "CREATE" | "UPDATE" | "DELETE";
 }
