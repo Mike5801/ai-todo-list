@@ -1,17 +1,16 @@
 "use client";
 import { TaskElement } from "@/components/TaskElement";
 import { Button } from "@/components/ui/button";
-import { TaskI } from "@/interfaces/task.interface";
 import { dbCreateTask, dbGetTasks } from "@/services/task.service";
 import useTaskState from "@/stores/task.store";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { SubscriptionTask } from "@/components/SubscriptionTask";
 
 export default function Home() {
   const tasks = useTaskState((state) => state.tasks);
   const setTasks = useTaskState((state) => state.setTasks);
-  const addTasks = useTaskState((state) => state.addTask);
+  const addTask = useTaskState((state) => state.addTask);
+
   useEffect(() => {
     async function getTasks() {
       try {
@@ -36,13 +35,7 @@ export default function Home() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       const task = data.task;
-      // const newTask: TaskI = {
-      //   id: task.id,
-      //   title: task.title,
-      //   status: task.status,
-      //   due_date: task.due_date,
-      // };
-      //addTasks(newTask);
+      addTask(task);
       toast.success(`Task "${task.title} created successfully"`);
     } catch (error: any) {
       toast.error(error.message);
@@ -62,7 +55,6 @@ export default function Home() {
           />
         ))}
       </div>
-      <SubscriptionTask />
       <form
         action={handleFormSubmit}
         className="flex justify-between gap-1 items-center"
