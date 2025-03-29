@@ -1,7 +1,7 @@
 "use client";
 import { useSubscription } from "@apollo/client";
 import useTaskState from "@/stores/task.store";
-import { TASK_SUBSCRIPTION } from "@/queries/graphql.queries";
+import { TASK_SUBSCRIPTION, TASK_SUBSCRIPTION_ID } from "@/queries/graphql.queries";
 import { TaskI } from "@/interfaces/task.interface";
 import { useEffect } from "react";
 import { TaskElement } from "@/components/TaskElement";
@@ -15,12 +15,18 @@ export default function Tasks() {
   const setTasks = useTaskState((state) => state.setTasks);
   const { data: data, loading, error } = useSubscription(TASK_SUBSCRIPTION);
 
+  /* 
+  const { data: example, loading: loadingExample } = useSubscription(
+    TASK_SUBSCRIPTION_ID,
+    { variables: { topicId: 2 } }
+  );
+  */
+
   useEffect(() => {
     function syncTask() {
       if (!loading && !error) {
         const response = data.taskSubscription;
         const operation = response.operation;
-        console.log(response);
         const task: TaskI = { 
           id: response.id,
           title: response.title,

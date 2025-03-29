@@ -11,3 +11,15 @@ export const TASK_SUBSCRIPTION = gql`
     }
   }
 `;
+
+export const TASK_SUBSCRIPTION_ID = gql`
+  subscription($topicId: Int!) {
+    taskSubscriptionByTopicId(topicId: $topicId) {
+      id
+      title
+      status
+      due_date
+      operation
+    }
+  }
+`;
